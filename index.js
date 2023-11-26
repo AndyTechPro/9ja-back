@@ -63,20 +63,24 @@ app.post('/admin', async (req, res) => {
 
 app.get('/profile', (req, res) => {
     const token = req.cookies.token;
-  
+    console.log('Received token:', token);
+
     if (!token) {
-      return res.status(401).json({ error: 'Unauthorized - Missing Token' });
+        console.log('No token found. Unauthorized.');
+        return res.status(401).json({ error: 'Unauthorized' });
     }
-  
-    jwt.verify(token, secret, (err, info) => {
-      if (err) {
-        console.error('Error verifying token:', err);
-        return res.status(401).json({ error: 'Unauthorized - Invalid Token' });
-      }
-  
-      res.json(info);
+
+    jwt.verify(token, secret, {}, (err, info) => {
+        if (err) {
+            console.error('Token verification error:', err);
+            return res.status(401).json({ error: 'Unauthorized' });
+        }
+
+        console.log('Token verified. User info:', info);
+        res.json(info);
     });
-  });
+});
+
   
 
 app.post('/logout', (req, res) => {
