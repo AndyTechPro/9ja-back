@@ -65,10 +65,17 @@ app.get('/profile', (req, res) => {
     const token = req.cookies.token;
     console.log('Received token:', token);
 
-    if (!token) {
-        console.log('No token found. Unauthorized.');
-        return res.status(401).json({ error: 'Unauthorized' });
-    }
+if (response.ok) {
+    response.json().then(userInfo => {
+        const token = generateToken(userInfo); 
+        console.log('Generated Token:', token);
+        res.json({ ...userInfo, token });
+    });
+} else {
+    console.error('Login failed:', response.statusText);
+    res.status(401).json({ error: 'Login failed. Please check your credentials.' });
+}
+
 
     jwt.verify(token, secret, {}, (err, info) => {
         if (err) {
