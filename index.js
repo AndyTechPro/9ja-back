@@ -63,29 +63,19 @@ app.post('/admin', async (req, res) => {
 
 app.get('/profile', (req, res) => {
     const token = req.cookies.token;
-    console.log('Received token:', token);
 
-if (response.ok) {
-    response.json().then(userInfo => {
-        const token = generateToken(userInfo); 
-        console.log('Generated Token:', token);
-        res.json({ ...userInfo, token });
-    });
-} else {
-    console.error('Login failed:', response.statusText);
-    res.status(401).json({ error: 'Login failed. Please check your credentials.' });
-}
+    if (!token) {
+        return res.status(401).json({ error: 'Unauthorized' });
+    }
 
-
-    jwt.verify(token, secret, {}, (err, info) => {
-        if (err) {
-            console.error('Token verification error:', err);
-            return res.status(401).json({ error: 'Unauthorized' });
-        }
-
-        console.log('Token verified. User info:', info);
-        res.json(info);
-    });
+    try {
+        const decoded = jwt.verify(token, secret);
+        const userInfo = getUserInfoSomehow(decoded); // Adjust this based on your server logic
+        res.json(userInfo);
+    } catch (err) {
+        console.error('Profile request failed:', err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
 });
 
   
