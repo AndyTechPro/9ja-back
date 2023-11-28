@@ -17,9 +17,10 @@ require("dotenv").config();
 
 
 const salt = bcrypt.genSaltSync(10);
-const secret = 'mywebblogsecret';
+const secret = 'mywebblogsecret'; 
 
 app.use(cors({ credentials: true, origin: 'https://ninejafront.onrender.com' }));
+app.use(cors({ credentials: true, origin: 'https://9ja-front-production.up.railway.app' }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
