@@ -418,15 +418,14 @@ app.get('/related-posts', async (req, res) => {
   
 
   // Search endpoint
-  app.post('/search', (req, res) => {
-    const searchTerm = req.body.searchTerm.toLowerCase(); 
-  
-    const searchResults = posts.filter(
+  app.get('/search', (req, res) => {
+    const searchTerm = req.query.term.toLowerCase();
+    const results = posts.filter(
       (post) =>
-        post.title.toLowerCase().includes(searchTerm) || post.content.toLowerCase().includes(searchTerm)
+        post.title.toLowerCase().includes(searchTerm) ||
+        post.content.toLowerCase().includes(searchTerm)
     );
-  
-    res.json({ results: searchResults });
+    res.json({ results });
   });
   
 
