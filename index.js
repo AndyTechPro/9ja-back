@@ -21,6 +21,7 @@ const secret = 'mywebblogsecret';
 
 app.use(cors({ credentials: true, origin: 'https://ninejafront.onrender.com' }));
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(methodOverride('_method'));
 app.use('/uploads', express.static(__dirname + '/uploads'));
@@ -45,34 +46,54 @@ app.post('/adminReg', async (req, res) => {
 });
 
 app.post('/admin', async (req, res) => {
-    const { username, password } = req.body;
-    const userDoc = await User.findOne({ username });
-    const passOk = bcrypt.compareSync(password, userDoc.password);
-    if (passOk) {
-        jwt.sign({ username, id: userDoc._id }, secret, {}, (err, token) => {
-            if (err) throw err;
-            res.cookie('token', token, { httpOnly: true }).json({
-                id: userDoc._id,
-                username,
+    try {
+        const { username, password } = req.body;
+        const userDoc = await User.findOne({ username });
+
+        if (!userDoc) {
+            return res.status(400).json({ error: 'User not found' });
+        }
+
+        const passOk = bcrypt.compareSync(password, userDoc.password);
+
+        if (passOk) {
+            jwt.sign({ username, id: userDoc._id }, secret, {}, (err, token) => {
+                if (err) {
+                    return res.status(500).json({ error: 'Internal Server Error' });
+                }
+                res.cookie('token', token, { httpOnly: true }).json({
+                    id: userDoc._id,
+                    username,
+                });
             });
-        });
-    } else {
-        res.status(400).json('wrong credentials');
+        } else {
+            res.status(401).json({ error: 'Unauthorized - Wrong credentials' });
+        }
+    } catch (error) {
+        console.error('Login failed:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
     }
 });
 
-app.get('/profile', (req, res) => {
+const mywebblogsecret = (req, res, next) => {
     const token = req.cookies.token;
+
     if (!token) {
-        return res.status(401).json({ error: 'Unauthorized' });
+        return res.status(401).json({ error: 'Unauthorized - No token found' });
     }
 
     jwt.verify(token, secret, {}, (err, info) => {
         if (err) {
-            return res.status(401).json({ error: 'Unauthorized' });
+            return res.status(401).json({ error: 'Unauthorized - Invalid token' });
         }
-        res.json(info);
+
+        req.user = info;
+        next();
     });
+};
+
+app.get('/profile', mywebblogsecret, (req, res) => {
+    res.json(req.user);
 });
 
   
