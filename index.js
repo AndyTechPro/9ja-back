@@ -57,25 +57,22 @@ app.post('/admin', async (req, res) => {
             });
         });
     } else {
-        res.status(400).json('wrong Credentials');
+        res.status(400).json('wrong credentials');
     }
 });
 
 app.get('/profile', (req, res) => {
     const token = req.cookies.token;
-
     if (!token) {
         return res.status(401).json({ error: 'Unauthorized' });
     }
 
-    try {
-        const decoded = jwt.verify(token, secret);
-        const userInfo = getUserInfoSomehow(decoded); // Adjust this based on your server logic
-        res.json(userInfo);
-    } catch (err) {
-        console.error('Profile request failed:', err);
-        res.status(500).json({ error: 'Internal Server Error' });
-    }
+    jwt.verify(token, secret, {}, (err, info) => {
+        if (err) {
+            return res.status(401).json({ error: 'Unauthorized' });
+        }
+        res.json(info);
+    });
 });
 
   
