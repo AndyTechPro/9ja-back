@@ -417,6 +417,25 @@ app.get('/related-posts', async (req, res) => {
   });
   
 
+  // Search endpoint
+app.post('/search', async (req, res) => {
+    try {
+      const searchTerm = req.body.searchTerm;
+  
+      const posts = await Post.find({
+        $or: [
+          { title: { $regex: searchTerm, $options: 'i' } },
+          { content: { $regex: searchTerm, $options: 'i' } },
+        ],
+      });
+  
+      res.json(posts);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
+
 
   
 
