@@ -61,7 +61,7 @@ app.post('/admin', async (req, res) => {
                 if (err) {
                     return res.status(500).json({ error: 'Internal Server Error' });
                 }
-                res.cookie('token', token, { httpOnly: true }).json({
+                res.cookie('token', token, { httpOnly: true, sameSite: 'None', secure: true }).json({
                     id: userDoc._id,
                     username,
                 });
@@ -83,6 +83,7 @@ const mywebblogsecret = (req, res, next) => {
     }
 
     jwt.verify(token, secret, {}, (err, info) => {
+        console.log('Token Verification Info:', info);
         if (err) {
             return res.status(401).json({ error: 'Unauthorized - Invalid token' });
         }
@@ -93,8 +94,10 @@ const mywebblogsecret = (req, res, next) => {
 };
 
 app.get('/profile', mywebblogsecret, (req, res) => {
+    console.log('Request Headers:', req.headers);
     res.json(req.user);
 });
+
 
   
 
