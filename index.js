@@ -396,7 +396,7 @@ app.get('/homepage2', async (req, res) => {
     }
   });
   
-  // Add this endpoint to your server code
+  // Related endpoint 
 app.get('/related-posts', async (req, res) => {
     try {
       const { title, category } = req.query;
