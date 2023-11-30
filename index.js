@@ -425,8 +425,8 @@ app.get('/related-posts', async (req, res) => {
       // Search for posts that match the title or content
       const results = await Post.find({
         $or: [
-          { title: { $regex: searchTerm, $options: 'i' } }, 
-          { content: { $regex: searchTerm, $options: 'i' } }, 
+          { title: { $regex: searchTerm, $options: 'i' } },
+          { content: { $regex: searchTerm, $options: 'i' } },
         ],
       });
   
@@ -436,6 +436,7 @@ app.get('/related-posts', async (req, res) => {
       res.status(500).json({ error: 'Internal Server Error' });
     }
   });
+  
 
 
   
