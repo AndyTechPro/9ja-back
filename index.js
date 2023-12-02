@@ -431,15 +431,16 @@ app.get('/related-posts', async (req, res) => {
       });
   
       if (results.length === 0) {
-        res.status(404).json({ results: [], message: 'No results found' });
+        res.json({ results: [], message: 'No results found' });
       } else {
-        res.status(200).json({ results });
+        res.json({ results });
       }
     } catch (error) {
       console.error('Error during search:', error);
       res.status(500).json({ error: 'Internal Server Error' });
     }
   });
+  
   
   
   
