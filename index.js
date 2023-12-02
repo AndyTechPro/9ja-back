@@ -418,7 +418,7 @@ app.get('/related-posts', async (req, res) => {
   
 
   // Search endpoint
-  app.get('/search', async (req, res) => {
+app.get('/search', async (req, res) => {
     try {
       const searchTerm = req.query.term.toLowerCase();
   
@@ -432,10 +432,9 @@ app.get('/related-posts', async (req, res) => {
   
       res.json({ results });
     } catch (error) {
-        console.error('Error during search:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
-      }
-      
+      console.error('Error during search:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
   });
   
   
