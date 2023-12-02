@@ -422,7 +422,6 @@ app.get('/related-posts', async (req, res) => {
     try {
       const searchTerm = req.query.term.toLowerCase();
   
-      // Search for posts that match the title or content
       const results = await Post.find({
         $or: [
           { title: { $regex: searchTerm, $options: 'i' } },
